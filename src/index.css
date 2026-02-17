@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@layer base {
+  :root {
+    --background: 160 30% 7%;
+    --foreground: 0 0% 95%;
+
+    --card: 160 25% 11%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 160 25% 11%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 160 80% 45%;
+    --primary-foreground: 160 30% 7%;
+
+    --secondary: 160 20% 16%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 160 15% 18%;
+    --muted-foreground: 160 10% 55%;
+
+    --accent: 160 30% 14%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 160 25% 20%;
+    --input: 160 20% 18%;
+    --ring: 160 80% 45%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 160 30% 9%;
+    --sidebar-foreground: 160 10% 55%;
+    --sidebar-primary: 160 80% 45%;
+    --sidebar-primary-foreground: 160 30% 7%;
+    --sidebar-accent: 160 30% 14%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 160 20% 15%;
+    --sidebar-ring: 160 80% 45%;
+
+    /* Semantic colors for data visualization */
+    --chart-green: 160 85% 48%;
+    --chart-blue: 210 85% 58%;
+    --chart-orange: 30 95% 58%;
+    --chart-red: 0 78% 58%;
+    --chart-yellow: 45 95% 58%;
+    --chart-pink: 330 75% 62%;
+    --chart-cyan: 180 75% 52%;
+
+    /* Status colors */
+    --status-success: 160 85% 48%;
+    --status-warning: 45 95% 58%;
+    --status-danger: 0 78% 58%;
+    --status-info: 210 85% 58%;
+
+    /* Election clock */
+    --clock-bg: 160 30% 12%;
+    --clock-border: 160 80% 45%;
+    --clock-text: 160 80% 45%;
+  }
+
+  .light {
+    --background: 150 20% 97%;
+    --foreground: 160 30% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 160 30% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 30% 10%;
+
+    --primary: 160 75% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 15% 92%;
+    --secondary-foreground: 160 30% 15%;
+
+    --muted: 160 10% 93%;
+    --muted-foreground: 160 10% 45%;
+
+    --accent: 160 20% 94%;
+    --accent-foreground: 160 30% 10%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 160 15% 88%;
+    --input: 160 15% 88%;
+    --ring: 160 75% 35%;
+
+    --sidebar-background: 160 15% 95%;
+    --sidebar-foreground: 160 10% 45%;
+    --sidebar-primary: 160 75% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 15% 92%;
+    --sidebar-accent-foreground: 160 30% 10%;
+    --sidebar-border: 160 15% 88%;
+    --sidebar-ring: 160 75% 35%;
+
+    --chart-green: 160 80% 38%;
+    --chart-blue: 210 80% 50%;
+    --chart-orange: 30 90% 50%;
+    --chart-red: 0 75% 50%;
+    --chart-yellow: 45 90% 45%;
+    --chart-pink: 330 70% 55%;
+    --chart-cyan: 180 70% 40%;
+
+    --status-success: 160 80% 38%;
+    --status-warning: 45 90% 50%;
+    --status-danger: 0 75% 50%;
+    --status-info: 210 80% 50%;
+
+    --clock-bg: 160 15% 95%;
+    --clock-border: 160 75% 35%;
+    --clock-text: 160 75% 35%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .stat-card {
+    @apply bg-card rounded-xl p-5 border border-primary/20 shadow-sm;
+    background-image: linear-gradient(
+      135deg,
+      hsl(var(--card)) 0%,
+      hsl(var(--accent)) 100%
+    );
+  }
+
+  .stat-card-glow {
+    @apply stat-card;
+    box-shadow: 0 0 24px -4px hsl(var(--primary) / 0.12),
+                0 2px 8px -2px hsl(var(--primary) / 0.06);
+  }
+
+  .dashboard-section {
+    @apply bg-card rounded-xl p-6 border border-primary/20 shadow-sm;
+    background-image: linear-gradient(
+      160deg,
+      hsl(var(--card)) 0%,
+      hsl(var(--accent) / 0.5) 100%
+    );
+  }
+
+  .glow-green {
+    box-shadow: 0 0 24px -4px hsl(var(--primary) / 0.25),
+                0 0 8px -2px hsl(var(--primary) / 0.15);
+  }
+
+  .sidebar-active {
+    @apply text-primary font-semibold;
+  }
+
+  .shine-border {
+    border-color: hsl(var(--primary) / 0.2);
+  }
+
+  /* Staggered fade-in for children */
+  .stagger-children > * {
+    opacity: 0;
+    animation: fade-in 0.4s ease-out forwards;
+  }
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 60ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 120ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 180ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 240ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 300ms; }
+  .stagger-children > *:nth-child(7) { animation-delay: 360ms; }
+  .stagger-children > *:nth-child(8) { animation-delay: 420ms; }
+  .stagger-children > *:nth-child(9) { animation-delay: 480ms; }
+
+  .bar-animate {
+    animation: bar-grow 0.8s ease-out forwards;
+    transform-origin: left;
+  }
+
+  @keyframes bar-grow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+}
