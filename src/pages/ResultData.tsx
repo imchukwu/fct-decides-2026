@@ -5,11 +5,11 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 const councils = ["ABUJA MUNICIPAL", "ABAJI", "BWARI", "GWAGWALADA", "KUJE", "KWALI"];
 
 const resultStats = [
-  { label: "REGISTERED VOTERS", value: "650,000", icon: Users, color: "text-foreground" },
-  { label: "ACCREDITED VOTERS", value: "412,000", icon: Target, color: "text-foreground" },
-  { label: "VALID VOTES", value: "401,500", icon: TrendingUp, color: "text-primary" },
-  { label: "REJECTED VOTES", value: "10,500", icon: AlertCircle, color: "text-destructive" },
-  { label: "TURNOUT %", value: "63.4%", icon: Users, color: "text-primary" },
+  { label: "REGISTERED VOTERS", value: "650,000", icon: Users, color: "bg-chart-blue text-white" },
+  { label: "ACCREDITED VOTERS", value: "412,000", icon: Target, color: "bg-chart-cyan text-white" },
+  { label: "VALID VOTES", value: "401,500", icon: TrendingUp, color: "bg-primary text-primary-foreground" },
+  { label: "REJECTED VOTES", value: "10,500", icon: AlertCircle, color: "bg-destructive text-white" },
+  { label: "TURNOUT %", value: "63.4%", icon: Users, color: "bg-chart-yellow text-primary-foreground" },
 ];
 
 const barData = [
@@ -18,7 +18,7 @@ const barData = [
   { name: "Party PDP", votes: 62000 },
   { name: "Party ADC", votes: 12500 },
 ];
-const barColors = ["hsl(160, 85%, 48%)", "hsl(210, 85%, 58%)", "hsl(30, 95%, 58%)", "hsl(45, 95%, 58%)"];
+const barColors = ["hsl(var(--primary))", "hsl(var(--chart-blue))", "hsl(var(--chart-orange))", "hsl(var(--chart-yellow))"];
 
 const voteShare = [
   { party: "Party A", share: 46.1, color: "bg-primary" },
@@ -66,19 +66,19 @@ export default function ResultData() {
       {/* Result Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 stagger-children">
         {resultStats.map((s) => (
-          <div key={s.label} className="stat-card-glow flex items-start justify-between hover:scale-[1.02] transition-transform duration-200">
+          <div key={s.label} className={`rounded-xl flex items-start justify-between p-5 hover:scale-[1.02] transition-transform duration-200 shadow-md ${s.color}`}>
             <div>
-              <div className="text-[10px] tracking-wider text-muted-foreground">{s.label}</div>
-              <div className={`text-xl lg:text-2xl font-bold mt-1 ${s.color}`}>{s.value}</div>
+              <div className="text-[10px] tracking-wider opacity-90">{s.label}</div>
+              <div className="text-xl lg:text-2xl font-bold mt-1">{s.value}</div>
             </div>
-            <s.icon className="h-4 w-4 text-primary/60" />
+            <s.icon className="h-4 w-4 opacity-80" />
           </div>
         ))}
       </div>
 
       {/* Party Performance + Vote Share */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 dashboard-section animate-fade-in">
+        <div className="lg:col-span-2 dashboard-section animate-fade-in border-chart-blue/50">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-bold text-foreground">Party Performance</h3>
@@ -90,10 +90,10 @@ export default function ResultData() {
           </div>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={barData} layout="vertical" barSize={30}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(160, 20%, 18%)" horizontal={false} />
-              <XAxis type="number" stroke="hsl(160, 10%, 55%)" tick={{ fontSize: 12 }} />
-              <YAxis type="category" dataKey="name" stroke="hsl(160, 10%, 55%)" tick={{ fontSize: 12 }} width={80} />
-              <Tooltip contentStyle={{ backgroundColor: "hsl(160, 25%, 11%)", border: "1px solid hsl(160, 20%, 18%)", borderRadius: 8, color: "#fff" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+              <XAxis type="number" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} />
+              <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} width={80} />
+              <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, color: "hsl(var(--foreground))" }} />
               <Bar dataKey="votes" radius={[0, 6, 6, 0]} animationDuration={1200}>
                 {barData.map((_, i) => <Cell key={i} fill={barColors[i]} />)}
               </Bar>
@@ -101,9 +101,9 @@ export default function ResultData() {
           </ResponsiveContainer>
         </div>
 
-        <div className="dashboard-section space-y-5 animate-fade-in">
+        <div className="dashboard-section space-y-5 animate-fade-in border-chart-orange/50">
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-accent p-2 glow-green"><TrendingUp className="h-5 w-5 text-primary" /></div>
+            <div className="rounded-full bg-chart-orange/20 p-2 glow-green"><TrendingUp className="h-5 w-5 text-chart-orange" /></div>
             <h3 className="text-lg font-bold text-foreground">Vote Share %</h3>
           </div>
           {voteShare.map((v) => (
@@ -128,10 +128,10 @@ export default function ResultData() {
       </div>
 
       {/* Ward Intelligence Breakdown */}
-      <div className="dashboard-section animate-fade-in">
+      <div className="dashboard-section animate-fade-in border-chart-yellow/50">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-3">
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-accent p-2"><Building2Icon className="h-5 w-5 text-primary" /></div>
+            <div className="rounded-full bg-chart-yellow/20 p-2"><Building2Icon className="h-5 w-5 text-chart-yellow" /></div>
             <div>
               <h3 className="text-lg font-bold text-foreground">Ward Intelligence Breakdown</h3>
               <p className="text-sm text-muted-foreground">Comparative metrics across all wards in {councils[activeCouncil]}</p>

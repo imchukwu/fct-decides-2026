@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Activity, Clock, FileText, ChevronLeft, ChevronRight, MapPin, Users, CreditCard, Building, Landmark, Settings, Menu } from "lucide-react";
+import { Activity, Clock, FileText, ChevronLeft, ChevronRight, MapPin, Users, CreditCard, Building, Landmark, Settings, Menu, Sun, Moon } from "lucide-react";
+import { useTheme } from "./theme-provider";
 
 const navItems = [
   { title: "Process Data", path: "/", icon: Activity },
@@ -9,11 +10,11 @@ const navItems = [
 ];
 
 const topStats = [
-  { label: "UNITS OBSERVING", value: "1,842", sub: "Real-time Feed", icon: MapPin },
-  { label: "REGISTERED VOTERS", value: "1,563,240", sub: "FCT Wide", icon: Users },
-  { label: "PVC COLLECTED", value: "1,420,105", sub: "90.8% Rate", icon: CreditCard },
-  { label: "WARDS", value: "62", sub: "62/62 Online", icon: Building },
-  { label: "POLLING UNITS", value: "2,822", sub: "Total Base", icon: Landmark },
+  { label: "UNITS OBSERVING", value: "1,842", sub: "Real-time Feed", icon: MapPin, color: "bg-primary text-primary-foreground" },
+  { label: "REGISTERED VOTERS", value: "1,563,240", sub: "FCT Wide", icon: Users, color: "bg-chart-blue text-white" },
+  { label: "PVC COLLECTED", value: "1,420,105", sub: "90.8% Rate", icon: CreditCard, color: "bg-chart-orange text-white" },
+  { label: "WARDS", value: "62", sub: "62/62 Online", icon: Building, color: "bg-chart-yellow text-primary-foreground" },
+  { label: "POLLING UNITS", value: "2,822", sub: "Total Base", icon: Landmark, color: "bg-chart-pink text-white" },
 ];
 
 function ElectionClock() {
@@ -35,6 +36,7 @@ function ElectionClock() {
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { setTheme, theme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -75,9 +77,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 hover:translate-x-1 ${
-                  isActive ? "text-primary font-semibold bg-primary/10 shine-border border border-primary/20" : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 hover:translate-x-1 ${isActive ? "text-primary font-semibold bg-primary/10 shine-border border border-primary/20" : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 <item.icon className={`h-5 w-5 shrink-0 ${isActive ? "drop-shadow-[0_0_6px_hsl(160,80%,45%)]" : ""}`} />
                 {(!collapsed || mobileOpen) && <span>{item.title}</span>}
@@ -114,20 +115,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-3 px-4 lg:px-6 py-3">
             <div className="flex flex-1 gap-2 lg:gap-3 overflow-x-auto scrollbar-hide stagger-children">
               {topStats.map((stat) => (
-                <div key={stat.label} className="stat-card-glow min-w-[140px] lg:min-w-0 flex-1 flex items-start justify-between py-3 px-3 lg:px-4 hover:scale-[1.02] transition-transform duration-200">
+                <div key={stat.label} className={`rounded-xl min-w-[140px] lg:min-w-0 flex-1 flex items-start justify-between py-3 px-3 lg:px-4 hover:scale-[1.02] transition-transform duration-200 shadow-md ${stat.color}`}>
                   <div>
-                    <div className="text-[9px] lg:text-[10px] tracking-wider text-muted-foreground">{stat.label}</div>
-                    <div className="text-lg lg:text-xl font-bold text-foreground">{stat.value}</div>
-                    <div className="text-[9px] lg:text-[10px] text-muted-foreground">{stat.sub}</div>
+                    <div className="text-[9px] lg:text-[10px] tracking-wider opacity-90">{stat.label}</div>
+                    <div className="text-lg lg:text-xl font-bold">{stat.value}</div>
+                    <div className="text-[9px] lg:text-[10px] opacity-80">{stat.sub}</div>
                   </div>
-                  <stat.icon className="h-4 w-4 text-primary/60" />
+                  <stat.icon className="h-4 w-4 opacity-80" />
                 </div>
               ))}
             </div>
             <div className="hidden lg:flex items-center gap-2">
               <ElectionClock />
-              <button className="rounded-full border border-border p-2 text-muted-foreground hover:text-foreground hover:rotate-90 transition-all duration-300">
-                <Settings className="h-5 w-5" />
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="rounded-full border border-border p-2 text-muted-foreground hover:text-foreground transition-all duration-300 relative h-9 w-9 flex items-center justify-center"
+              >
+                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 absolute" />
+                <Moon className="h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 absolute" />
               </button>
             </div>
           </div>

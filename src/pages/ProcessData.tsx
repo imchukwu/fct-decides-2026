@@ -2,20 +2,20 @@ import { Users, Clock, Shield, Package, CheckCircle, AlertCircle, Send, Clipboar
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 const summaryStats = [
-  { label: "UNITS OBSERVING", value: "1,842", sub: "VERIFIED FIELD REPORTS", icon: Users, color: "text-chart-green" },
-  { label: "STAFF ARRIVAL RATE", value: "89.5%", sub: "PRESENT BY 7:30 AM", icon: Clock, color: "text-chart-yellow" },
-  { label: "SECURITY PRESENCE", value: "94.2%", sub: "LAW ENFORCEMENT ON-SITE", icon: Shield, color: "text-chart-orange" },
-  { label: "SUPPLY READINESS", value: "96.1%", sub: "MATERIALS VERIFIED", icon: Package, color: "text-chart-cyan" },
+  { label: "UNITS OBSERVING", value: "1,842", sub: "VERIFIED FIELD REPORTS", icon: Users, color: "bg-chart-green text-white" },
+  { label: "STAFF ARRIVAL RATE", value: "89.5%", sub: "PRESENT BY 7:30 AM", icon: Clock, color: "bg-chart-yellow text-primary-foreground" },
+  { label: "SECURITY PRESENCE", value: "94.2%", sub: "LAW ENFORCEMENT ON-SITE", icon: Shield, color: "bg-chart-orange text-white" },
+  { label: "SUPPLY READINESS", value: "96.1%", sub: "MATERIALS VERIFIED", icon: Package, color: "bg-chart-cyan text-white" },
 ];
 
 const punctualityData = [
-  { name: "On Time", value: 89, fill: "hsl(160, 85%, 48%)" },
-  { name: "Late", value: 11, fill: "hsl(260, 50%, 40%)" },
+  { name: "On Time", value: 89, fill: "hsl(var(--status-success))" },
+  { name: "Late", value: 11, fill: "hsl(var(--status-danger))" }, // approximating 260 hue as close to danger or just use what fits
 ];
 
 const genderData = [
-  { name: "Male", value: 53, fill: "hsl(210, 85%, 58%)" },
-  { name: "Female", value: 47, fill: "hsl(330, 75%, 62%)" },
+  { name: "Male", value: 53, fill: "hsl(var(--chart-blue))" },
+  { name: "Female", value: 47, fill: "hsl(var(--chart-pink))" },
 ];
 
 const complianceBars = [
@@ -80,14 +80,14 @@ export default function ProcessData() {
       {/* Summary Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 stagger-children">
         {summaryStats.map((s) => (
-          <div key={s.label} className="stat-card-glow flex items-start justify-between hover:scale-[1.02] transition-transform duration-200">
+          <div key={s.label} className={`rounded-xl flex items-start justify-between p-5 hover:scale-[1.02] transition-transform duration-200 shadow-md ${s.color}`}>
             <div>
-              <div className="text-[10px] tracking-wider text-muted-foreground">{s.label}</div>
-              <div className="text-2xl lg:text-3xl font-bold text-foreground mt-1">{s.value}</div>
-              <div className={`text-[10px] tracking-wider mt-1 ${s.color}`}>{s.sub}</div>
+              <div className="text-[10px] tracking-wider opacity-90">{s.label}</div>
+              <div className="text-2xl lg:text-3xl font-bold mt-1">{s.value}</div>
+              <div className="text-[10px] tracking-wider mt-1 opacity-80">{s.sub}</div>
             </div>
-            <div className="rounded-full bg-accent p-2 glow-green">
-              <s.icon className="h-5 w-5 text-primary" />
+            <div className="rounded-full bg-white/20 p-2 backdrop-blur-sm">
+              <s.icon className="h-5 w-5" />
             </div>
           </div>
         ))}
@@ -95,17 +95,17 @@ export default function ProcessData() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 stagger-children">
-        <div className="dashboard-section flex flex-col items-center animate-slide-up">
+        <div className="dashboard-section flex flex-col items-center animate-slide-up border-chart-blue/50">
           <div className="flex items-center gap-3 w-full mb-4">
-            <div className="rounded-full bg-accent p-2"><Clock className="h-5 w-5 text-primary" /></div>
+            <div className="rounded-full bg-chart-blue/20 p-2"><Clock className="h-5 w-5 text-chart-blue" /></div>
             <h3 className="text-lg font-bold text-foreground">Staff Punctuality</h3>
           </div>
           <DonutChart data={punctualityData} centerValue="89%" centerLabel="OFFICIALS ARRIVED BEFORE 7:30 AM" />
         </div>
 
-        <div className="dashboard-section flex flex-col items-center animate-slide-up">
+        <div className="dashboard-section flex flex-col items-center animate-slide-up border-chart-pink/50">
           <div className="flex items-center gap-3 w-full mb-4">
-            <div className="rounded-full bg-accent p-2"><Users className="h-5 w-5 text-primary" /></div>
+            <div className="rounded-full bg-chart-pink/20 p-2"><Users className="h-5 w-5 text-chart-pink" /></div>
             <h3 className="text-lg font-bold text-foreground">Gender Distribution</h3>
           </div>
           <DonutChart data={genderData} centerValue="" centerLabel="" />
@@ -121,9 +121,9 @@ export default function ProcessData() {
           </div>
         </div>
 
-        <div className="dashboard-section animate-slide-up">
+        <div className="dashboard-section animate-slide-up border-chart-yellow/50">
           <div className="flex items-center gap-3 mb-6">
-            <div className="rounded-full bg-accent p-2"><Clock className="h-5 w-5 text-primary" /></div>
+            <div className="rounded-full bg-chart-yellow/20 p-2"><Clock className="h-5 w-5 text-chart-yellow" /></div>
             <h3 className="text-lg font-bold text-foreground">Opening Compliance</h3>
           </div>
           <div className="space-y-4">
@@ -140,9 +140,9 @@ export default function ProcessData() {
       </div>
 
       {/* Material Supply Status */}
-      <div className="dashboard-section animate-fade-in">
+      <div className="dashboard-section animate-fade-in border-chart-cyan/50">
         <div className="flex items-center gap-3 mb-2">
-          <div className="rounded-full bg-accent p-2"><Package className="h-5 w-5 text-primary" /></div>
+          <div className="rounded-full bg-chart-cyan/20 p-2"><Package className="h-5 w-5 text-chart-cyan" /></div>
           <div>
             <h3 className="text-lg font-bold text-foreground">Material Supply Status</h3>
             <p className="text-sm text-muted-foreground">Inventory presence tracking by Area Council and Ward</p>
@@ -162,31 +162,31 @@ export default function ProcessData() {
 
       {/* Reporting Velocity + PU Counting Ops */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3 dashboard-section animate-fade-in">
+        <div className="lg:col-span-3 dashboard-section animate-fade-in border-primary/50">
           <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-full bg-accent p-2"><Send className="h-5 w-5 text-primary" /></div>
+            <div className="rounded-full bg-primary/20 p-2"><Send className="h-5 w-5 text-primary" /></div>
             <h3 className="text-lg font-bold text-foreground">Reporting Velocity</h3>
           </div>
           <ResponsiveContainer width="100%" height={250}>
             <AreaChart data={velocityData}>
               <defs>
                 <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(160, 85%, 48%)" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="hsl(160, 85%, 48%)" stopOpacity={0} />
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(160, 20%, 18%)" />
-              <XAxis dataKey="time" stroke="hsl(160, 10%, 55%)" tick={{ fontSize: 12 }} />
-              <YAxis stroke="hsl(160, 10%, 55%)" tick={{ fontSize: 12 }} />
-              <Tooltip contentStyle={{ backgroundColor: "hsl(160, 25%, 11%)", border: "1px solid hsl(160, 20%, 18%)", borderRadius: 8, color: "#fff" }} />
-              <Area type="monotone" dataKey="value" stroke="hsl(160, 85%, 48%)" fill="url(#greenGrad)" strokeWidth={2.5} animationDuration={1500} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} />
+              <YAxis stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} />
+              <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, color: "hsl(var(--foreground))" }} />
+              <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" fill="url(#greenGrad)" strokeWidth={2.5} animationDuration={1500} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="lg:col-span-2 dashboard-section animate-fade-in">
+        <div className="lg:col-span-2 dashboard-section animate-fade-in border-chart-orange/50">
           <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-full bg-accent p-2"><ClipboardList className="h-5 w-5 text-primary" /></div>
+            <div className="rounded-full bg-chart-orange/20 p-2"><ClipboardList className="h-5 w-5 text-chart-orange" /></div>
             <h3 className="text-lg font-bold text-foreground">PU Counting Ops</h3>
           </div>
           <div className="space-y-5">
@@ -206,7 +206,7 @@ export default function ProcessData() {
       </div>
 
       {/* Serious Election Incidents */}
-      <div className="dashboard-section animate-fade-in">
+      <div className="dashboard-section animate-fade-in border-destructive/50">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-destructive/20 p-2"><AlertCircle className="h-5 w-5 text-destructive" /></div>
