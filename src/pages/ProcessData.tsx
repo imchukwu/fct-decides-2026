@@ -216,7 +216,7 @@ export default function ProcessData() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 stagger-children">
           {incidents.map((inc, i) => (
-            <div key={i} className="rounded-xl border border-border bg-accent/50 p-5 space-y-3 hover:border-primary/30 transition-all duration-300 hover:scale-[1.02]">
+            <div key={i} className="rounded-xl border border-primary/40 bg-accent/50 p-5 space-y-3 hover:border-primary/30 transition-all duration-300 hover:scale-[1.02]">
               <div className="flex items-center justify-between">
                 <span className={`text-[10px] font-bold tracking-wider px-2 py-0.5 rounded ${inc.severity === "CRITICAL" ? "bg-destructive text-foreground" : "bg-chart-orange/20 text-chart-orange"}`}>
                   {inc.severity}

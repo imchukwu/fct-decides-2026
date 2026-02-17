@@ -47,9 +47,8 @@ export default function ResultData() {
             <button
               key={c}
               onClick={() => setActiveCouncil(i)}
-              className={`rounded-full px-4 lg:px-5 py-2 text-xs lg:text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                i === activeCouncil ? "bg-primary text-primary-foreground glow-green scale-105" : "text-muted-foreground hover:text-foreground hover:bg-accent"
-              }`}
+              className={`rounded-full px-4 lg:px-5 py-2 text-xs lg:text-sm font-medium transition-all duration-200 whitespace-nowrap ${i === activeCouncil ? "bg-primary text-primary-foreground glow-green scale-105" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                }`}
             >
               {c}
             </button>
@@ -85,7 +84,7 @@ export default function ResultData() {
               <h3 className="text-lg font-bold text-foreground">Party Performance</h3>
               <p className="text-sm text-muted-foreground">Council-wide Vote Distribution for {councils[activeCouncil]}</p>
             </div>
-            <button className="rounded-lg border border-border p-2 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all">
+            <button className="rounded-lg border border-primary/40 p-2 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all">
               <Download className="h-4 w-4" />
             </button>
           </div>
@@ -139,11 +138,11 @@ export default function ResultData() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-accent/50 px-3 py-2">
+            <div className="flex items-center gap-2 rounded-lg border border-primary/40 bg-accent/50 px-3 py-2">
               <Search className="h-4 w-4 text-muted-foreground" />
               <input className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none w-36" placeholder="Search ward..." />
             </div>
-            <button className="rounded-lg border border-border p-2 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all">
+            <button className="rounded-lg border border-primary/40 p-2 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all">
               <Filter className="h-4 w-4" />
             </button>
           </div>
@@ -152,7 +151,7 @@ export default function ResultData() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px]">
             <thead>
-              <tr className="border-b border-border">
+              <tr className="border-b border-primary/40">
                 {["WARD NAME", "REG. VOTERS", "ACCREDITED", "TURNOUT %", "LEADING PARTY", "VALID VOTES", "ACTION"].map((h) => (
                   <th key={h} className="py-3 text-left text-[10px] tracking-wider text-muted-foreground font-medium">{h}</th>
                 ))}
@@ -160,7 +159,7 @@ export default function ResultData() {
             </thead>
             <tbody>
               {wardData.map((ward, i) => (
-                <tr key={ward.name} className="border-b border-border/50 hover:bg-accent/30 transition-all duration-200" style={{ animationDelay: `${i * 80}ms` }}>
+                <tr key={ward.name} className="border-b border-primary/20 hover:bg-accent/30 transition-all duration-200" style={{ animationDelay: `${i * 80}ms` }}>
                   <td className="py-4">
                     <div className="font-medium text-foreground">{ward.name}</div>
                     <div className="text-[10px] text-muted-foreground tracking-wider">{ward.sector}</div>
@@ -176,9 +175,8 @@ export default function ResultData() {
                     </div>
                   </td>
                   <td>
-                    <span className={`text-[10px] font-medium tracking-wider px-2 py-1 rounded ${
-                      ward.leadingParty === "PARTY A" ? "bg-primary/20 text-primary" : "bg-chart-blue/20 text-chart-blue"
-                    }`}>
+                    <span className={`text-[10px] font-medium tracking-wider px-2 py-1 rounded ${ward.leadingParty === "PARTY A" ? "bg-primary/20 text-primary" : "bg-chart-blue/20 text-chart-blue"
+                      }`}>
                       {ward.leadingParty}
                     </span>
                   </td>
