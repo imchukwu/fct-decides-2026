@@ -2,10 +2,10 @@ import { Users, Clock, Shield, Package, CheckCircle, AlertCircle, Send, Clipboar
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 const summaryStats = [
-  { label: "UNITS OBSERVING", value: "1,842", sub: "VERIFIED FIELD REPORTS", icon: Users, color: "bg-chart-green text-white" },
-  { label: "STAFF ARRIVAL RATE", value: "89.5%", sub: "PRESENT BY 7:30 AM", icon: Clock, color: "bg-chart-yellow text-primary-foreground" },
-  { label: "SECURITY PRESENCE", value: "94.2%", sub: "LAW ENFORCEMENT ON-SITE", icon: Shield, color: "bg-chart-orange text-white" },
-  { label: "SUPPLY READINESS", value: "96.1%", sub: "MATERIALS VERIFIED", icon: Package, color: "bg-chart-cyan text-white" },
+  { label: "INEC OFFICER", value: "89.5%", sub: "PRESENT BY 7:30 AM", icon: Users, color: "bg-chart-green text-white" },
+  { label: "FEMALE OFFICER", value: "47%", sub: "GENDER DISTRIBUTION", icon: Users, color: "bg-chart-pink text-white" },
+  { label: "SECURITY PERSONNEL", value: "94.2%", sub: "LAW ENFORCEMENT ON-SITE", icon: Shield, color: "bg-chart-blue text-white" },
+  { label: "PARTY AGENTS", value: "98.2%", sub: "PRESENT AT PUs", icon: Users, color: "bg-chart-orange text-white" },
 ];
 
 const punctualityData = [

@@ -9,6 +9,7 @@ import ProcessData from "./pages/ProcessData";
 import ResultData from "./pages/ResultData";
 import ResultCollation from "./pages/ResultCollation";
 import NotFound from "./pages/NotFound";
+import LandingPage from "./pages/LandingPage";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<DashboardLayout><ProcessData /></DashboardLayout>} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/process-data" element={<DashboardLayout><ProcessData /></DashboardLayout>} />
             <Route path="/result-data" element={<DashboardLayout><ResultData /></DashboardLayout>} />
             <Route path="/result-collation" element={<DashboardLayout><ResultCollation /></DashboardLayout>} />
             <Route path="*" element={<NotFound />} />
