@@ -1,13 +1,9 @@
-import { useState, useEffect } from "react";
 import { Users, Clock, Shield, Package, CheckCircle, AlertCircle, Send, ClipboardList } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
-import { ELECTION_DATA } from "../constants/electionData";
-
 const summaryStats = [
-  // { label: "INEC OFFICER", value: "89.5%", sub: "PRESENT BY 7:30 AM", icon: Users, color: "bg-chart-green text-white" },
-  { label: "UNIT OBSERVING", value: "207", sub: "DEPLOYED", icon: Users, color: "bg-chart-green text-white" },
-  { label: "REGISTERED VOTERS", value: ELECTION_DATA.voters.formatted, sub: "TOTAL REGISTERED", icon: Users, color: "bg-chart-pink text-white" },
+  { label: "INEC OFFICER", value: "89.5%", sub: "PRESENT BY 7:30 AM", icon: Users, color: "bg-chart-green text-white" },
+  { label: "FEMALE OFFICER", value: "47%", sub: "GENDER DISTRIBUTION", icon: Users, color: "bg-chart-pink text-white" },
   { label: "SECURITY PERSONNEL", value: "94.2%", sub: "LAW ENFORCEMENT ON-SITE", icon: Shield, color: "bg-chart-blue text-white" },
   { label: "PARTY AGENTS", value: "98.2%", sub: "PRESENT AT PUs", icon: Users, color: "bg-chart-orange text-white" },
 ];
@@ -18,8 +14,8 @@ const punctualityData = [
 ];
 
 const genderData = [
-  { name: "Male", value: ELECTION_DATA.voters.male, fill: "hsl(var(--chart-blue))" },
-  { name: "Female", value: ELECTION_DATA.voters.female, fill: "hsl(var(--chart-pink))" },
+  { name: "Male", value: 53, fill: "hsl(var(--chart-blue))" },
+  { name: "Female", value: 47, fill: "hsl(var(--chart-pink))" },
 ];
 
 const complianceBars = [
@@ -79,83 +75,11 @@ function DonutChart({ data, centerValue, centerLabel }: { data: { name: string; 
 }
 
 export default function ProcessData() {
-  const [stats, setStats] = useState({
-    pus_opened: 0,
-    incidents_reported: 0,
-    results_uploaded: 0,
-    collation_started: 0
-  });
-  const [loading, setLoading] = useState(true);
-
-  // Derived state for UI
-  const [displayData, setDisplayData] = useState({
-    summary: summaryStats, // Default mock data
-    punctuality: punctualityData,
-    gender: genderData,
-    compliance: complianceBars,
-    materials: materialItems,
-    velocity: velocityData,
-    ops: countingOps,
-    incidents: incidents
-  });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Use the base URL from environment or default
-        const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-        const response = await fetch(`${baseURL}/dashboard/stats`);
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data);
-
-          // If no data in DB, zero out the mock data
-          if (data.pus_opened === 0) {
-            setDisplayData({
-              summary: [
-                { label: "INEC OFFICER", value: "0%", sub: "PRESENT BY 7:30 AM", icon: Users, color: "bg-chart-green text-white" },
-                { label: "REGISTERED VOTERS", value: ELECTION_DATA.voters.formatted, sub: "TOTAL REGISTERED", icon: Users, color: "bg-chart-pink text-white" },
-                { label: "SECURITY PERSONNEL", value: "0%", sub: "LAW ENFORCEMENT ON-SITE", icon: Shield, color: "bg-chart-blue text-white" },
-                { label: "PARTY AGENTS", value: "0%", sub: "PRESENT AT PUs", icon: Users, color: "bg-chart-orange text-white" },
-              ],
-              punctuality: [
-                { name: "On Time", value: 0, fill: "hsl(var(--status-success))" },
-                { name: "Late", value: 0, fill: "hsl(var(--status-danger))" },
-              ],
-              gender: [
-                { name: "Male", value: 0, fill: "hsl(var(--chart-blue))" },
-                { name: "Female", value: 0, fill: "hsl(var(--chart-pink))" },
-              ],
-              compliance: complianceBars.map(b => ({ ...b, value: 0 })),
-              materials: materialItems.map(m => ({ ...m, value: 0 })),
-              velocity: velocityData.map(v => ({ ...v, value: 0 })),
-              ops: countingOps.map(o => ({ ...o, value: 0 })),
-              incidents: []
-            });
-          }
-          // Logic to handle incidents if count > 0 but we don't have the list yet
-          // (For now, if incidents_reported === 0, clear the list. If > 0, we'd ideally fetch them)
-          if (data.incidents_reported === 0) {
-            setDisplayData(prev => ({ ...prev, incidents: [] }));
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch public stats", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-    const interval = setInterval(fetchData, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 stagger-children">
-        {displayData.summary.map((s) => (
+        {summaryStats.map((s) => (
           <div key={s.label} className={`rounded-xl flex items-start justify-between p-5 hover:scale-[1.02] transition-transform duration-200 shadow-md ${s.color}`}>
             <div>
               <div className="text-[10px] tracking-wider opacity-90">{s.label}</div>
@@ -176,7 +100,7 @@ export default function ProcessData() {
             <div className="rounded-full bg-chart-blue/20 p-2"><Clock className="h-5 w-5 text-chart-blue" /></div>
             <h3 className="text-lg font-bold text-foreground">Staff Punctuality</h3>
           </div>
-          <DonutChart data={displayData.punctuality} centerValue={stats.pus_opened > 0 ? "89%" : "0%"} centerLabel="OFFICIALS ARRIVED BEFORE 7:30 AM" />
+          <DonutChart data={punctualityData} centerValue="89%" centerLabel="OFFICIALS ARRIVED BEFORE 7:30 AM" />
         </div>
 
         <div className="dashboard-section flex flex-col items-center animate-slide-up border-chart-pink/50">
@@ -184,15 +108,15 @@ export default function ProcessData() {
             <div className="rounded-full bg-chart-pink/20 p-2"><Users className="h-5 w-5 text-chart-pink" /></div>
             <h3 className="text-lg font-bold text-foreground">Gender Distribution</h3>
           </div>
-          <DonutChart data={displayData.gender} centerValue="" centerLabel="" />
-          <div className="flex gap-4 mt-2 justify-center w-full px-2">
+          <DonutChart data={genderData} centerValue="" centerLabel="" />
+          <div className="flex gap-8 mt-2">
             <div className="text-center">
-              <div className="text-lg font-bold text-chart-blue">{stats.pus_opened > 0 ? ELECTION_DATA.voters.maleFormatted : "0"}</div>
-              <div className="text-[10px] text-muted-foreground tracking-wider">MALE VOTERS</div>
+              <div className="text-xl font-bold text-chart-blue">53%</div>
+              <div className="text-[10px] text-muted-foreground tracking-wider">MALE STAFF</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-chart-pink">{stats.pus_opened > 0 ? ELECTION_DATA.voters.femaleFormatted : "0"}</div>
-              <div className="text-[10px] text-muted-foreground tracking-wider">FEMALE VOTERS</div>
+              <div className="text-xl font-bold text-chart-pink">47%</div>
+              <div className="text-[10px] text-muted-foreground tracking-wider">FEMALE STAFF</div>
             </div>
           </div>
         </div>
@@ -203,7 +127,7 @@ export default function ProcessData() {
             <h3 className="text-lg font-bold text-foreground">Opening Compliance</h3>
           </div>
           <div className="space-y-4">
-            {displayData.compliance.map((bar) => (
+            {complianceBars.map((bar) => (
               <div key={bar.label} className="flex items-center gap-3">
                 <div className="text-[11px] text-muted-foreground w-28 lg:w-32 text-right shrink-0">{bar.label}</div>
                 <div className="flex-1 bg-muted rounded-full h-5 overflow-hidden">
@@ -225,7 +149,7 @@ export default function ProcessData() {
           </div>
         </div>
         <div className="grid grid-cols-4 lg:grid-cols-7 gap-4 mt-6 stagger-children">
-          {displayData.materials.map((item) => (
+          {materialItems.map((item) => (
             <div key={item.label} className="flex flex-col items-center gap-2 hover:scale-105 transition-transform duration-200">
               <div className="relative h-16 w-16 rounded-full border-2 border-primary/30 flex items-center justify-center glow-green">
                 <span className="text-sm font-bold text-primary">{item.value}%</span>
@@ -244,7 +168,7 @@ export default function ProcessData() {
             <h3 className="text-lg font-bold text-foreground">Reporting Velocity</h3>
           </div>
           <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={displayData.velocity}>
+            <AreaChart data={velocityData}>
               <defs>
                 <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
@@ -266,7 +190,7 @@ export default function ProcessData() {
             <h3 className="text-lg font-bold text-foreground">PU Counting Ops</h3>
           </div>
           <div className="space-y-5">
-            {displayData.ops.map((op) => (
+            {countingOps.map((op) => (
               <div key={op.label} className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm text-foreground">{op.label}</span>
@@ -290,38 +214,32 @@ export default function ProcessData() {
           </div>
           <span className="text-xs text-muted-foreground tracking-wider cursor-pointer hover:text-primary transition-colors">VIEW FULL AUDIT LOG</span>
         </div>
-        {displayData.incidents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 stagger-children">
-            {displayData.incidents.map((inc, i) => (
-              <div key={i} className="rounded-xl border border-primary/40 bg-accent/50 p-5 space-y-3 hover:border-primary/30 transition-all duration-300 hover:scale-[1.02]">
-                <div className="flex items-center justify-between">
-                  <span className={`text-[10px] font-bold tracking-wider px-2 py-0.5 rounded ${inc.severity === "CRITICAL" ? "bg-destructive text-foreground" : "bg-chart-orange/20 text-chart-orange"}`}>
-                    {inc.severity}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{inc.source}</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 stagger-children">
+          {incidents.map((inc, i) => (
+            <div key={i} className="rounded-xl border border-primary/40 bg-accent/50 p-5 space-y-3 hover:border-primary/30 transition-all duration-300 hover:scale-[1.02]">
+              <div className="flex items-center justify-between">
+                <span className={`text-[10px] font-bold tracking-wider px-2 py-0.5 rounded ${inc.severity === "CRITICAL" ? "bg-destructive text-foreground" : "bg-chart-orange/20 text-chart-orange"}`}>
+                  {inc.severity}
+                </span>
+                <span className="text-xs text-muted-foreground">{inc.source}</span>
+              </div>
+              <div>
+                <div className={`font-bold ${inc.severity === "CRITICAL" ? "text-destructive" : "text-chart-orange"}`}>{inc.title}</div>
+                <div className="text-sm text-muted-foreground">{inc.location}</div>
+              </div>
+              <div className="flex gap-8">
+                <div>
+                  <div className="text-[10px] tracking-wider text-muted-foreground">VICTIM AFFILIATION</div>
+                  <div className="text-sm text-foreground">{inc.victim}</div>
                 </div>
                 <div>
-                  <div className={`font-bold ${inc.severity === "CRITICAL" ? "text-destructive" : "text-chart-orange"}`}>{inc.title}</div>
-                  <div className="text-sm text-muted-foreground">{inc.location}</div>
-                </div>
-                <div className="flex gap-8">
-                  <div>
-                    <div className="text-[10px] tracking-wider text-muted-foreground">VICTIM AFFILIATION</div>
-                    <div className="text-sm text-foreground">{inc.victim}</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] tracking-wider text-muted-foreground">PERPETRATOR</div>
-                    <div className="text-sm text-foreground">{inc.perpetrator}</div>
-                  </div>
+                  <div className="text-[10px] tracking-wider text-muted-foreground">PERPETRATOR</div>
+                  <div className="text-sm text-foreground">{inc.perpetrator}</div>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-10 text-muted-foreground border border-dashed rounded-xl">
-            No serious incidents reported at this time.
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

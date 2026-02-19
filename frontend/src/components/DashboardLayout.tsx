@@ -4,15 +4,15 @@ import { Activity, Clock, FileText, ChevronLeft, ChevronRight, MapPin, Users, Cr
 import { useTheme } from "./theme-provider";
 
 const navItems = [
-  { title: "Process Data", path: "/", icon: Activity },
+  { title: "Process Data", path: "/process-data", icon: Activity },
   { title: "Result Data", path: "/result-data", icon: Clock },
   { title: "Result Collation", path: "/result-collation", icon: FileText },
 ];
 
 const topStats = [
-  { label: "UNITS OBSERVING", value: "1,842", sub: "Real-time Feed", icon: MapPin, color: "bg-primary text-primary-foreground" },
-  { label: "REGISTERED VOTERS", value: "1,563,240", sub: "FCT Wide", icon: Users, color: "bg-chart-blue text-white" },
-  { label: "PVC COLLECTED", value: "1,420,105", sub: "90.8% Rate", icon: CreditCard, color: "bg-chart-orange text-white" },
+  { label: "UNITS OBSERVING", value: "207", sub: "Real-time Feed", icon: MapPin, color: "bg-primary text-primary-foreground" },
+  { label: "REGISTERED VOTERS", value: "1,680,315", sub: "FCT Wide", icon: Users, color: "bg-chart-blue text-white" },
+  { label: "PVC COLLECTED", value: "-", sub: "% Rate", icon: CreditCard, color: "bg-chart-orange text-white" },
   { label: "WARDS", value: "62", sub: "62/62 Online", icon: Building, color: "bg-chart-yellow text-primary-foreground" },
   { label: "POLLING UNITS", value: "2,822", sub: "Total Base", icon: Landmark, color: "bg-chart-pink text-white" },
 ];

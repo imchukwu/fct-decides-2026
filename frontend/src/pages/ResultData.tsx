@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Users, Target, TrendingUp, AlertCircle, Search, Filter, ChevronRight, Download } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { ELECTION_DATA } from "../constants/electionData";
 
 const councils = ["ABUJA MUNICIPAL", "ABAJI", "BWARI", "GWAGWALADA", "KUJE", "KWALI"];
 
@@ -37,6 +38,52 @@ const wardData = [
 
 export default function ResultData() {
   const [activeCouncil, setActiveCouncil] = useState(0);
+  const [stats, setStats] = useState({
+    results_uploaded: 0
+  });
+
+  // Derived state for UI
+  const [displayData, setDisplayData] = useState({
+    stats: resultStats,
+    bars: barData,
+    share: voteShare,
+    wards: wardData
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const baseURL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+        const response = await fetch(`${baseURL}/dashboard/stats`);
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+
+          // If no results uploaded, zero out everything
+          if (data.results_uploaded === 0) {
+            setDisplayData({
+              stats: [
+                { label: "REGISTERED VOTERS", value: ELECTION_DATA.voters.formatted, icon: Users, color: "bg-chart-blue text-white" },
+                { label: "ACCREDITED VOTERS", value: "0", icon: Target, color: "bg-chart-cyan text-white" },
+                { label: "VALID VOTES", value: "0", icon: TrendingUp, color: "bg-primary text-primary-foreground" },
+                { label: "REJECTED VOTES", value: "0", icon: AlertCircle, color: "bg-destructive text-white" },
+                { label: "TURNOUT %", value: "0%", icon: Users, color: "bg-chart-yellow text-primary-foreground" },
+              ],
+              bars: [],
+              share: [],
+              wards: []
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch public stats", error);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -65,7 +112,7 @@ export default function ResultData() {
 
       {/* Result Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 lg:gap-4 stagger-children">
-        {resultStats.map((s) => (
+        {displayData.stats.map((s) => (
           <div key={s.label} className={`rounded-xl flex items-start justify-between p-5 hover:scale-[1.02] transition-transform duration-200 shadow-md ${s.color}`}>
             <div>
               <div className="text-[10px] tracking-wider opacity-90">{s.label}</div>
@@ -88,17 +135,23 @@ export default function ResultData() {
               <Download className="h-4 w-4" />
             </button>
           </div>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={barData} layout="vertical" barSize={30}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-              <XAxis type="number" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} />
-              <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} width={80} />
-              <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, color: "hsl(var(--foreground))" }} />
-              <Bar dataKey="votes" radius={[0, 6, 6, 0]} animationDuration={1200}>
-                {barData.map((_, i) => <Cell key={i} fill={barColors[i]} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          {displayData.bars.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={displayData.bars} layout="vertical" barSize={30}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                <XAxis type="number" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} />
+                <YAxis type="category" dataKey="name" stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 12 }} width={80} />
+                <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, color: "hsl(var(--foreground))" }} />
+                <Bar dataKey="votes" radius={[0, 6, 6, 0]} animationDuration={1200}>
+                  {displayData.bars.map((_, i) => <Cell key={i} fill={barColors[i]} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[280px] flex items-center justify-center text-muted-foreground border border-dashed rounded-xl">
+              No votes recorded yet.
+            </div>
+          )}
         </div>
 
         <div className="dashboard-section space-y-5 animate-fade-in border-chart-orange/50">
@@ -106,24 +159,31 @@ export default function ResultData() {
             <div className="rounded-full bg-chart-orange/20 p-2 glow-green"><TrendingUp className="h-5 w-5 text-chart-orange" /></div>
             <h3 className="text-lg font-bold text-foreground">Vote Share %</h3>
           </div>
-          {voteShare.map((v) => (
-            <div key={v.party} className="space-y-2">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className={`h-4 w-1 rounded-full ${v.color}`} />
-                  <span className="text-sm font-medium text-foreground">{v.party}</span>
+          {displayData.share.length > 0 ? (
+            displayData.share.map((v) => (
+              <div key={v.party} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div className={`h-4 w-1 rounded-full ${v.color}`} />
+                    <span className="text-sm font-medium text-foreground">{v.party}</span>
+                  </div>
+                  <span className="text-sm font-bold text-primary">{v.share}%</span>
                 </div>
-                <span className="text-sm font-bold text-primary">{v.share}%</span>
+                <div className="h-1 rounded-full bg-muted overflow-hidden">
+                  <div className={`h-full rounded-full bar-animate ${v.color}`} style={{ width: `${v.share * 2}%` }} />
+                </div>
               </div>
-              <div className="h-1 rounded-full bg-muted overflow-hidden">
-                <div className={`h-full rounded-full bar-animate ${v.color}`} style={{ width: `${v.share * 2}%` }} />
-              </div>
+            ))
+          ) : (
+            <div className="py-10 text-center text-sm text-muted-foreground">Waiting for results...</div>
+          )}
+
+          {displayData.share.length > 0 && (
+            <div className="rounded-lg border border-primary/20 bg-accent/50 p-4 mt-4 glow-green">
+              <div className="text-xs text-primary tracking-wider font-medium">LEAD ANALYSIS</div>
+              <p className="text-sm text-muted-foreground mt-1">Party A leads by 43,000 votes in {councils[activeCouncil]}.</p>
             </div>
-          ))}
-          <div className="rounded-lg border border-primary/20 bg-accent/50 p-4 mt-4 glow-green">
-            <div className="text-xs text-primary tracking-wider font-medium">LEAD ANALYSIS</div>
-            <p className="text-sm text-muted-foreground mt-1">Party A leads by 43,000 votes in {councils[activeCouncil]}.</p>
-          </div>
+          )}
         </div>
       </div>
 
@@ -158,36 +218,42 @@ export default function ResultData() {
               </tr>
             </thead>
             <tbody>
-              {wardData.map((ward, i) => (
-                <tr key={ward.name} className="border-b border-primary/20 hover:bg-accent/30 transition-all duration-200" style={{ animationDelay: `${i * 80}ms` }}>
-                  <td className="py-4">
-                    <div className="font-medium text-foreground">{ward.name}</div>
-                    <div className="text-[10px] text-muted-foreground tracking-wider">{ward.sector}</div>
-                  </td>
-                  <td className="text-sm text-muted-foreground">{ward.regVoters}</td>
-                  <td className="text-sm text-muted-foreground">{ward.accredited}</td>
-                  <td>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-foreground">{ward.turnout}%</span>
-                      <div className="h-1.5 w-12 rounded-full bg-muted overflow-hidden">
-                        <div className="h-full rounded-full bg-chart-orange bar-animate" style={{ width: `${ward.turnout}%` }} />
+              {displayData.wards.length > 0 ? (
+                displayData.wards.map((ward, i) => (
+                  <tr key={ward.name} className="border-b border-primary/20 hover:bg-accent/30 transition-all duration-200" style={{ animationDelay: `${i * 80}ms` }}>
+                    <td className="py-4">
+                      <div className="font-medium text-foreground">{ward.name}</div>
+                      <div className="text-[10px] text-muted-foreground tracking-wider">{ward.sector}</div>
+                    </td>
+                    <td className="text-sm text-muted-foreground">{ward.regVoters}</td>
+                    <td className="text-sm text-muted-foreground">{ward.accredited}</td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{ward.turnout}%</span>
+                        <div className="h-1.5 w-12 rounded-full bg-muted overflow-hidden">
+                          <div className="h-full rounded-full bg-chart-orange bar-animate" style={{ width: `${ward.turnout}%` }} />
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`text-[10px] font-medium tracking-wider px-2 py-1 rounded ${ward.leadingParty === "PARTY A" ? "bg-primary/20 text-primary" : "bg-chart-blue/20 text-chart-blue"
-                      }`}>
-                      {ward.leadingParty}
-                    </span>
-                  </td>
-                  <td className="text-sm font-medium text-primary">{ward.validVotes}</td>
-                  <td>
-                    <button className="text-muted-foreground hover:text-primary transition-colors">
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </td>
+                    </td>
+                    <td>
+                      <span className={`text-[10px] font-medium tracking-wider px-2 py-1 rounded ${ward.leadingParty === "PARTY A" ? "bg-primary/20 text-primary" : "bg-chart-blue/20 text-chart-blue"
+                        }`}>
+                        {ward.leadingParty}
+                      </span>
+                    </td>
+                    <td className="text-sm font-medium text-primary">{ward.validVotes}</td>
+                    <td>
+                      <button className="text-muted-foreground hover:text-primary transition-colors">
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="text-center py-10 text-muted-foreground">No ward data available.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
